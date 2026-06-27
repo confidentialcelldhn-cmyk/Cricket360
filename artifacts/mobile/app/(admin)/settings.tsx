@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, FormInput, SectionHeader } from "@/components/ui";
@@ -13,7 +13,7 @@ const isWeb = Platform.OS === "web";
 export default function SettingsScreen() {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const { settings, updateSettings, uploadQrPhoto, isOnline, useSupabase, toggleSupabase } = useData();
+  const { settings, updateSettings, uploadQrPhoto, isOnline } = useData();
   const [form, setForm] = useState({ ...settings });
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -87,32 +87,20 @@ export default function SettingsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: isWeb ? 100 : 90 }}>
-        {/* Supabase Toggle */}
-        <SectionHeader title="Database Mode" />
+        {/* Cloud Status */}
+        <SectionHeader title="Database" />
         <View style={[styles.section, { backgroundColor: c.surfaceWhite, borderColor: c.borderSubtle }]}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: isOnline ? "#22c55e" : "#f59e0b" }} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: c.textPrimary }}>
-                {useSupabase ? "Supabase Cloud" : "Local Storage"}
+                Supabase Cloud {isOnline ? "(Online)" : "(Offline)"}
               </Text>
               <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.textSecondary, marginTop: 2 }}>
-                {useSupabase
-                  ? `Connected ${isOnline ? "(Online)" : "(Offline — local fallback)"}`
-                  : "All data stored on this device only"}
+                All data synced to Supabase. Photos stored in cloud storage.
               </Text>
             </View>
-            <Switch
-              value={useSupabase}
-              onValueChange={toggleSupabase}
-              trackColor={{ false: c.borderSubtle, true: c.primary500 }}
-              thumbColor="#fff"
-            />
           </View>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.textDisabled }}>
-            {useSupabase
-              ? "Data is synced to the Supabase cloud database. Photos upload to cloud storage."
-              : "All data stays on this device. No internet required. Good for testing."}
-          </Text>
         </View>
 
         {/* Academy Info */}

@@ -74,6 +74,14 @@ export async function updateUserRecord(
   if (error) throw error;
 }
 
+export async function resetUserPassword(userId: string, defaultPassword: string): Promise<void> {
+  const { error } = await supabase
+    .from("users")
+    .update({ password: defaultPassword, is_first_login: true })
+    .eq("id", userId);
+  if (error) throw error;
+}
+
 export async function fetchUsers(): Promise<User[]> {
   const { data, error } = await supabase.from("users").select("*").order("created_at", { ascending: false });
   if (error) throw error;

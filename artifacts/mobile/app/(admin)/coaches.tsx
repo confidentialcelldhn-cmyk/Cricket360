@@ -105,7 +105,30 @@ export default function CoachesScreen() {
 function CoachDetailModal({ coach, batches, onClose, onEdit, onDeactivate }: any) {
   const c = useColors();
   const insets = useSafeAreaInsets();
+  const { resetPassword } = useData();
   const coachBatches = batches.filter((b: any) => coach.batchIds.includes(b.id));
+
+  const handleResetPassword = () => {
+    Alert.alert(
+      "Reset Password",
+      `Reset ${coach.name}'s password to Coach@123? They will be asked to change it on next login.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await resetPassword(coach.userId, "coach");
+              Alert.alert("Done", "Password reset to Coach@123. Coach must change it on next login.");
+            } catch (e) {
+              Alert.alert("Error", "Could not reset password. Please try again.");
+            }
+          },
+        },
+      ]
+    );
+  };
   const rows = [
     { label: "HRMS ID", value: coach.hrmsId },
     { label: "Designation", value: coach.designation },
@@ -144,6 +167,7 @@ function CoachDetailModal({ coach, batches, onClose, onEdit, onDeactivate }: any
         </Card>
         <View style={{ marginTop: 20, gap: 10 }}>
           <Button onPress={onEdit} label="Edit Coach Details" variant="secondary" fullWidth icon="edit-2" />
+          <Button onPress={handleResetPassword} label="Reset Password" variant="secondary" fullWidth icon="key" />
           {coach.status === "active" && (
             <Button onPress={onDeactivate} label="Deactivate Coach" variant="danger" fullWidth icon="user-x" />
           )}

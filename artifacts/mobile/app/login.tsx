@@ -177,16 +177,16 @@ export default function LoginScreen() {
             </Pressable>
           </View>
 
-          {/* Demo hint */}
+          {/* Login details */}
           <View style={styles.demoHint}>
-            <Text style={[styles.demoText, { color: c.textDisabled }]}>
-              Admin: 9999999999 / Admin@123
+            <Text style={[styles.demoText, { color: c.textSecondary, fontFamily: "Inter_600SemiBold" }]}>
+              Login Details
             </Text>
             <Text style={[styles.demoText, { color: c.textDisabled }]}>
-              Coach: 9876543210 / Coach@123
+              Mobile No.: Registered Mobile Number
             </Text>
             <Text style={[styles.demoText, { color: c.textDisabled }]}>
-              Student: 9811111111 / Student@123
+              Password for Coach &amp; Student: Coach@123 | Student@123
             </Text>
           </View>
 

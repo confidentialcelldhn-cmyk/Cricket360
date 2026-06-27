@@ -32,6 +32,7 @@ import {
   updateStudentRecord,
   updateCoachRecord,
   updateUserRecord,
+  resetUserPassword,
   upsertAttendanceLog,
   insertPerformanceLog,
   upsertFinancialLog,
@@ -82,7 +83,7 @@ interface DataContextType {
   isLoading: boolean;
   isOnline: boolean;
   useSupabase: boolean;
-  toggleSupabase: () => Promise<void>;
+  resetPassword: (userId: string, role: string) => Promise<void>;
 
   // Student ops
   addStudent: (student: Student, user: User) => Promise<void>;
@@ -150,36 +151,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const [useSupabase, setUseSupabase] = useState(!!SUPABASE_URL);
 
-  // Load initial preference (default ON if Supabase is configured)
-  useEffect(() => {
-    AsyncStorage.getItem(KEYS.supabaseEnabled).then((val) => {
-      if (val === null) {
-        // No preference set yet → default to ON if Supabase is configured
-        setUseSupabase(!!SUPABASE_URL);
-        if (SUPABASE_URL) AsyncStorage.setItem(KEYS.supabaseEnabled, "true");
-      } else {
-        setUseSupabase(val === "true" && !!SUPABASE_URL);
-      }
-    });
-  }, [SUPABASE_URL]);
-
-  // Toggle Supabase mode
-  const toggleSupabase = useCallback(async () => {
-    const next = !useSupabase;
-    setUseSupabase(next);
-    await AsyncStorage.setItem(KEYS.supabaseEnabled, next ? "true" : "false");
-    if (next) {
-      // Reload from Supabase
-      setIsLoading(true);
-      await loadSupabase();
-      setIsLoading(false);
-    } else {
-      // Reload from local
-      setIsLoading(true);
-      await loadLocal();
-      setIsLoading(false);
-    }
-  }, [useSupabase, SUPABASE_URL]);
+  // Reset a coach or student password to the default in Supabase
+  const resetPassword = useCallback(async (userId: string, role: string) => {
+    const defaultPwd = role === "coach" ? "Coach@123" : "Student@123";
+    await resetUserPassword(userId, defaultPwd);
+  }, []);
 
   // Load from Supabase
   const loadSupabase = async () => {
@@ -649,7 +625,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isOnline,
         useSupabase,
-        toggleSupabase,
+        resetPassword,
         addStudent,
         updateStudent,
         deactivateStudent,

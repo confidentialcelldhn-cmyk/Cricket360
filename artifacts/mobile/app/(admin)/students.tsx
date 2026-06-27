@@ -214,7 +214,30 @@ export default function StudentsScreen() {
 function StudentDetailModal({ student, batches, onClose, onDeactivate, onReactivate, onTransfer, onEdit }: any) {
   const c = useColors();
   const insets = useSafeAreaInsets();
+  const { resetPassword } = useData();
   const [showTransfer, setShowTransfer] = useState(false);
+
+  const handleResetPassword = () => {
+    Alert.alert(
+      "Reset Password",
+      `Reset ${student.name}'s password to Student@123? They will be asked to change it on next login.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await resetPassword(student.userId, "student");
+              Alert.alert("Done", "Password reset to Student@123. Student must change it on next login.");
+            } catch (e) {
+              Alert.alert("Error", "Could not reset password. Please try again.");
+            }
+          },
+        },
+      ]
+    );
+  };
   const batch = batches.find((b: any) => b.id === student.batchId);
 
   const rows = [
@@ -279,6 +302,7 @@ function StudentDetailModal({ student, batches, onClose, onDeactivate, onReactiv
         </Card>
 
         <View style={{ gap: 10, marginTop: 20 }}>
+          <Button onPress={handleResetPassword} label="Reset Password" variant="secondary" fullWidth icon="key" />
           {student.status === "active" ? (
             <>
               <Button onPress={() => setShowTransfer(true)} label="Transfer Batch" variant="secondary" fullWidth icon="repeat" />
