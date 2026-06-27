@@ -1,0 +1,1 @@
+- [Cricket360 bug patterns](cricket360-bugs.md) — key architectural quirks discovered during bug-fix pass
