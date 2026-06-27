@@ -130,10 +130,10 @@ export default function AdminDashboard() {
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <View>
                     <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: c.textPrimary }}>
-                      {batch.name} — {batch.label}
+                      {batch.name} - {batch.ageRange}
                     </Text>
                     <Text style={{ color: c.textSecondary, fontSize: 13, marginTop: 2, fontFamily: "Inter_400Regular" }}>
-                      {batch.ageRange} · {batchStudents} students
+                      {batchStudents} students
                     </Text>
                   </View>
                   <StatusBadge status="Active" />

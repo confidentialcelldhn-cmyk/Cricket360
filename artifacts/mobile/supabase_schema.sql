@@ -219,9 +219,9 @@ CREATE POLICY "Allow all updates" ON public.settings FOR UPDATE USING (true);
 -- ─── Seed Data (Batches + Default Settings) ─────────────────────────────────────────────
 
 INSERT INTO public.batches (id, name, label, age_range, coach_ids) VALUES
-  ('batch-a', 'Group A', 'Foundation', '4-7 yrs', '{}'),
-  ('batch-b', 'Group B', 'Intermediate', '8-11 yrs', '{}'),
-  ('batch-c', 'Group C', 'Advanced', '12-15 yrs', '{}')
+  ('batch-a', 'Group A', '6-10 yrs', '6-10 yrs', '{}'),
+  ('batch-b', 'Group B', '11-15 yrs', '11-15 yrs', '{}'),
+  ('batch-c', 'Group C', '15+ yrs', '15+ yrs', '{}')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO public.settings (id, fee_amount, upi_id, beneficiary_name, academy_name, academy_address, academy_phone, academy_email) VALUES

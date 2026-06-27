@@ -66,8 +66,7 @@ export default function CoachProfileScreen() {
             return (
               <View key={batch.id} style={[styles.batchBadge, { backgroundColor: `${color}15`, borderColor: `${color}40` }]}>
                 <Text style={{ color, fontFamily: "Inter_700Bold", fontSize: 14 }}>{batch.name}</Text>
-                <Text style={{ color, fontFamily: "Inter_400Regular", fontSize: 12 }}>{batch.label}</Text>
-                <Text style={{ color: `${color}AA`, fontFamily: "Inter_400Regular", fontSize: 11 }}>{batch.ageRange}</Text>
+                <Text style={{ color, fontFamily: "Inter_400Regular", fontSize: 12 }}>{batch.ageRange}</Text>
               </View>
             );
           })}

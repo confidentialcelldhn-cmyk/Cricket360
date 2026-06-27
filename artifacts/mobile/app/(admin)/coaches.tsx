@@ -134,7 +134,7 @@ function CoachDetailModal({ coach, batches, onClose, onEdit, onDeactivate }: any
     { label: "Designation", value: coach.designation },
     { label: "Mobile", value: coach.mobile },
     { label: "Email", value: coach.email || "—" },
-    { label: "Batches", value: coachBatches.map((b: any) => `${b.name} (${b.label})`).join(", ") || "None" },
+    { label: "Batches", value: coachBatches.map((b: any) => `${b.name} (${b.ageRange})`).join(", ") || "None" },
     { label: "Member Since", value: new Date(coach.createdAt).toLocaleDateString("en-IN") },
     { label: "Status", value: coach.status === "active" ? "Active" : "Inactive" },
   ];
@@ -252,7 +252,7 @@ function EditCoachModal({ coach, batches, onClose, onSave, uploadStudentPhoto }:
           <Text style={{ color: c.textSecondary, fontFamily: "Inter_500Medium", fontSize: 12, textTransform: "uppercase", marginBottom: 8, letterSpacing: 0.5 }}>Assign Batch</Text>
           {batches.map((b: any) => (
             <Pressable key={b.id} style={[styles.batchOption, { borderColor: form.batchId === b.id ? c.primary500 : c.borderSubtle, backgroundColor: form.batchId === b.id ? c.primary050 : c.surfaceWhite }]} onPress={() => set("batchId", b.id)}>
-              <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} — {b.label}</Text>
+              <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} - {b.ageRange}</Text>
             </Pressable>
           ))}
         </View>
@@ -364,7 +364,7 @@ function AddCoachModal({ batches, onClose, onSave, uploadStudentPhoto }: any) {
           <Text style={{ color: c.textSecondary, fontFamily: "Inter_500Medium", fontSize: 12, textTransform: "uppercase", marginBottom: 8, letterSpacing: 0.5 }}>Assign Batch</Text>
           {batches.map((b: any) => (
             <Pressable key={b.id} style={[styles.batchOption, { borderColor: form.batchId === b.id ? c.primary500 : c.borderSubtle, backgroundColor: form.batchId === b.id ? c.primary050 : c.surfaceWhite }]} onPress={() => set("batchId", b.id)}>
-              <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} — {b.label}</Text>
+              <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} - {b.ageRange}</Text>
             </Pressable>
           ))}
         </View>

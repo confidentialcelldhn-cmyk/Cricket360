@@ -134,7 +134,7 @@ export default function RosterScreen() {
           <View>
             <Text style={styles.title}>My Students</Text>
             <Text style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Inter_400Regular", fontSize: 13, marginTop: 2 }}>
-              {primaryBatch?.name} — {primaryBatch?.label} · {batchStudents.length} active
+              {primaryBatch?.name} - {primaryBatch?.ageRange} · {batchStudents.length} active
             </Text>
           </View>
           <Pressable style={[styles.addBtn, { backgroundColor: c.accentGold }]} onPress={() => setShowAdd(true)}>
@@ -353,7 +353,7 @@ function StudentDetailModal({ student, onClose }: { student: Student; onClose: (
     { label: "Parent Mobile", value: student.parentMobile },
     { label: "Playing Role", value: student.playingRole ?? "Not set" },
     { label: "Coach", value: coach?.name ?? "Not assigned" },
-    { label: "Batch", value: batch ? `${batch.name} (${batch.label})` : "—" },
+    { label: "Batch", value: batch ? `${batch.name} - ${batch.ageRange}` : "—" },
     { label: "Height", value: student.height ? `${student.height} cm` : "Not set" },
     { label: "Weight", value: student.weight ? `${student.weight} kg` : "Not set" },
     { label: "Railway Staff", value: student.isRailway ? "Yes" : "No" },

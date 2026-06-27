@@ -65,7 +65,7 @@ export default function StudentsScreen() {
               {item.isRailway && <Feather name="shield" size={12} color={c.primary500} />}
             </View>
             <Text style={{ color: c.textSecondary, fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 1 }}>
-              Age {getAge(item.dateOfBirth)} · {batch?.name} — {batch?.label} · {item.playingRole ?? "Role N/A"}
+              Age {getAge(item.dateOfBirth)} · {batch?.name} - {batch?.ageRange} · {item.playingRole ?? "Role N/A"}
             </Text>
             <Text style={{ color: c.textDisabled, fontSize: 11, fontFamily: "Inter_400Regular", marginTop: 1 }}>
               {item.parentMobile}
@@ -249,7 +249,7 @@ function StudentDetailModal({ student, batches, onClose, onDeactivate, onReactiv
     student.whatsappNo ? { label: "WhatsApp No.", value: student.whatsappNo } : null,
     student.email ? { label: "Email", value: student.email } : null,
     { label: "Address", value: student.address },
-    { label: "Batch", value: `${batch?.name} — ${batch?.label}` },
+    { label: "Batch", value: batch ? `${batch.name} - ${batch.ageRange}` : "—" },
     { label: "Playing Role", value: student.playingRole ?? "Not set" },
     { label: "Railway Staff", value: student.isRailway ? "Yes" : "No" },
     student.isRailway && student.designation ? { label: "Designation", value: student.designation } : null,
@@ -322,8 +322,7 @@ function StudentDetailModal({ student, batches, onClose, onDeactivate, onReactiv
                 style={[styles.batchOption, { borderColor: c.borderSubtle, backgroundColor: c.surfaceWhite }]}
                 onPress={() => { onTransfer(b.id); setShowTransfer(false); }}
               >
-                <Text style={{ fontFamily: "Inter_600SemiBold", color: c.primary700 }}>{b.name} — {b.label}</Text>
-                <Text style={{ color: c.textSecondary, fontSize: 12, fontFamily: "Inter_400Regular" }}>{b.ageRange}</Text>
+                <Text style={{ fontFamily: "Inter_600SemiBold", color: c.primary700 }}>{b.name} - {b.ageRange}</Text>
               </Pressable>
             ))}
           </View>
@@ -546,8 +545,7 @@ function AddStudentModal({ batches, onClose, onSave, uploadStudentPhoto }: any) 
             style={[styles.batchOption, { borderColor: form.batchId === b.id ? c.primary500 : c.borderSubtle, backgroundColor: form.batchId === b.id ? c.primary050 : c.surfaceWhite }]}
             onPress={() => set("batchId", b.id)}
           >
-            <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} — {b.label}</Text>
-            <Text style={{ color: c.textSecondary, fontSize: 12, fontFamily: "Inter_400Regular" }}>{b.ageRange}</Text>
+            <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} - {b.ageRange}</Text>
           </Pressable>
         ))}
 
@@ -699,8 +697,7 @@ function EditStudentModal({ student, batches, onClose, onSave, uploadStudentPhot
             style={[styles.batchOption, { borderColor: form.batchId === b.id ? c.primary500 : c.borderSubtle, backgroundColor: form.batchId === b.id ? c.primary050 : c.surfaceWhite }]}
             onPress={() => set("batchId", b.id)}
           >
-            <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} — {b.label}</Text>
-            <Text style={{ color: c.textSecondary, fontSize: 12, fontFamily: "Inter_400Regular" }}>{b.ageRange}</Text>
+            <Text style={{ fontFamily: "Inter_600SemiBold", color: form.batchId === b.id ? c.primary700 : c.textPrimary }}>{b.name} - {b.ageRange}</Text>
           </Pressable>
         ))}
 

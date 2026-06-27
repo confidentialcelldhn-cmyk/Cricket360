@@ -57,9 +57,9 @@ export default function BatchesScreen() {
               >
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                   <View>
-                    <Text style={{ fontFamily: "Inter_700Bold", fontSize: 17, color: c.textPrimary }}>{batch.name} — {batch.label}</Text>
+                    <Text style={{ fontFamily: "Inter_700Bold", fontSize: 17, color: c.textPrimary }}>{batch.name} - {batch.ageRange}</Text>
                     <Text style={{ color: c.textSecondary, fontSize: 13, fontFamily: "Inter_400Regular", marginTop: 2 }}>
-                      {batch.ageRange} · {coach?.name ?? "No coach"}
+                      {coach?.name ?? "No coach"}
                     </Text>
                   </View>
                   <View style={{ alignItems: "flex-end", gap: 4 }}>

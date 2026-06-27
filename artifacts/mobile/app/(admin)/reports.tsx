@@ -259,7 +259,7 @@ export default function ReportsScreen() {
                   >
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: c.textPrimary }}>{batch.name} — {batch.label}</Text>
+                        <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: c.textPrimary }}>{batch.name} - {batch.ageRange}</Text>
                         <Text style={{ color: c.textSecondary, fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 }}>
                           {paid}/{batchStudents.length} paid · tap to see individual status
                         </Text>
@@ -313,7 +313,7 @@ export default function ReportsScreen() {
             {attendanceSummary.map(({ batch, sessionsLogged, rate, presentEntries }) => (
               <Card key={batch.id} style={{ marginBottom: 10 }}>
                 <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: c.textPrimary, marginBottom: 8 }}>
-                  {batch.name} — {batch.label}
+                  {batch.name} - {batch.ageRange}
                 </Text>
                 <View style={{ flexDirection: "row", gap: 20 }}>
                   <View>
@@ -350,7 +350,7 @@ export default function ReportsScreen() {
             {performanceSummary.map(({ batch, entriesCount, uniqueStudents, avgBatting }) => (
               <Card key={batch.id} style={{ marginBottom: 10 }}>
                 <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: c.textPrimary, marginBottom: 8 }}>
-                  {batch.name} — {batch.label}
+                  {batch.name} - {batch.ageRange}
                 </Text>
                 <View style={{ flexDirection: "row", gap: 20 }}>
                   <View>

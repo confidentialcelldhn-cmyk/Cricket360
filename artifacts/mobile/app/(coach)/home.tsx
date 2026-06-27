@@ -70,8 +70,8 @@ export default function CoachHomeScreen() {
           <View style={[styles.batchBanner, { backgroundColor: "rgba(255,255,255,0.1)" }]}>
             <View>
               <Text style={styles.batchLabel}>Primary Batch</Text>
-              <Text style={styles.batchName}>{primaryBatch.name} — {primaryBatch.label}</Text>
-              <Text style={styles.batchSub}>{primaryBatch.ageRange} · {batchStudents.length} students</Text>
+              <Text style={styles.batchName}>{primaryBatch.name} - {primaryBatch.ageRange}</Text>
+              <Text style={styles.batchSub}>{batchStudents.length} students</Text>
             </View>
             {upcomingSession && (
               <View style={{ alignItems: "flex-end" }}>

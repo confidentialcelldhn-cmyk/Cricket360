@@ -64,7 +64,7 @@ export default function StudentProfileScreen() {
     { icon: "user" as const, label: "Father's Name", value: student.fatherName },
     { icon: "calendar" as const, label: "Date of Birth", value: `${prettyDate(student.dateOfBirth)} (Age ${getAge(student.dateOfBirth)})` },
     { icon: "phone" as const, label: "Parent Mobile", value: student.parentMobile },
-    { icon: "layers" as const, label: "Batch", value: `${batch?.name} — ${batch?.label} (${batch?.ageRange})` },
+    { icon: "layers" as const, label: "Batch", value: batch ? `${batch.name} - ${batch.ageRange}` : "—" },
     { icon: "user-check" as const, label: "Coach", value: coach?.name ?? "—" },
     { icon: "shield" as const, label: "Railway Staff", value: student.isRailway ? `Yes (${student.designation ?? "Staff"})` : "No" },
     { icon: "home" as const, label: "Address", value: student.address || "—" },
@@ -79,7 +79,7 @@ export default function StudentProfileScreen() {
       >
         <Avatar name={student.name} size={80} uri={student.photo} />
         <Text style={styles.name}>{student.name}</Text>
-        <Text style={styles.batchLabel}>{batch?.name} — {batch?.label}</Text>
+        <Text style={styles.batchLabel}>{batch?.name} - {batch?.ageRange}</Text>
         <View style={[styles.idChip, { borderColor: "rgba(245,158,11,0.3)", backgroundColor: "rgba(245,158,11,0.15)" }]}>
           <Text style={{ color: "#F59E0B", fontFamily: "Inter_600SemiBold", fontSize: 12 }}>
             Login: {currentUser?.loginId}
