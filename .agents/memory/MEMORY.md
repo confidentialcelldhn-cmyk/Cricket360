@@ -1,1 +1,2 @@
 - [Cricket360 bug patterns](cricket360-bugs.md) — key architectural quirks discovered during bug-fix pass
+- [Cricket360 Replit workflow setup](cricket360-replit-setup.md) — two-workflow setup for landing page + Expo dev server
