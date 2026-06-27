@@ -45,8 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const init = async () => {
-      const supabaseFlag = await AsyncStorage.getItem(SUPABASE_ENABLED);
-      const enabled = supabaseFlag === "true" && !!SUPABASE_URL;
+      const enabled = !!SUPABASE_URL;
       setUseSupabase(enabled);
 
       if (enabled) {
