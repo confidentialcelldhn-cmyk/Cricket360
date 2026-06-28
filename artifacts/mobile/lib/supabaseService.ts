@@ -52,6 +52,21 @@ export async function updateCoachRecord(id: string, updates: Partial<Coach>): Pr
   return fromSupabaseCoach(data);
 }
 
+export async function deleteStudentRecord(id: string): Promise<void> {
+  const { error } = await supabase.from("students").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteCoachRecord(id: string): Promise<void> {
+  const { error } = await supabase.from("coaches").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteUserRecord(id: string): Promise<void> {
+  const { error } = await supabase.from("users").delete().eq("id", id);
+  if (error) throw error;
+}
+
 // ─── Batches ───────────────────────────────────────────────────────
 
 export async function fetchBatches(): Promise<Batch[]> {

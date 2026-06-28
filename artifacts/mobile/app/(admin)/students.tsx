@@ -214,7 +214,7 @@ export default function StudentsScreen() {
 function StudentDetailModal({ student, batches, onClose, onDeactivate, onReactivate, onTransfer, onEdit }: any) {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const { resetPassword } = useData();
+  const { resetPassword, deleteStudent } = useData();
   const [showTransfer, setShowTransfer] = useState(false);
 
   const handleResetPassword = () => {
@@ -311,6 +311,27 @@ function StudentDetailModal({ student, batches, onClose, onDeactivate, onReactiv
           ) : (
             <Button onPress={onReactivate} label="Reactivate Student" variant="primary" fullWidth icon="user-check" />
           )}
+          <Button
+            onPress={() => Alert.alert(
+              "Delete Student Permanently",
+              `This will permanently delete ${student.name} and all their data. This cannot be undone.\n\nType DELETE to confirm.`,
+              [
+                { text: "Cancel", style: "cancel" },
+                {
+                  text: "Delete Permanently",
+                  style: "destructive",
+                  onPress: async () => {
+                    await deleteStudent(student.id);
+                    onClose();
+                  },
+                },
+              ]
+            )}
+            label="Delete Permanently"
+            variant="danger"
+            fullWidth
+            icon="trash-2"
+          />
         </View>
 
         {showTransfer && (

@@ -216,11 +216,15 @@ CREATE POLICY "Allow all updates" ON public.financial_logs FOR UPDATE USING (tru
 CREATE POLICY "Allow all updates" ON public.notifications FOR UPDATE USING (true);
 CREATE POLICY "Allow all updates" ON public.settings FOR UPDATE USING (true);
 
+CREATE POLICY "Allow all deletes" ON public.students FOR DELETE USING (true);
+CREATE POLICY "Allow all deletes" ON public.coaches FOR DELETE USING (true);
+CREATE POLICY "Allow all deletes" ON public.users FOR DELETE USING (true);
+
 -- ─── Seed Data (Batches + Default Settings) ─────────────────────────────────────────────
 
 INSERT INTO public.batches (id, name, label, age_range, coach_ids) VALUES
-  ('batch-a', 'Group A', '6-10 yrs', '6-10 yrs', '{}'),
-  ('batch-b', 'Group B', '11-15 yrs', '11-15 yrs', '{}'),
+  ('batch-a', 'Group A', '6-10 years', '6-10 years', '{}'),
+  ('batch-b', 'Group B', '11-15 years', '11-15 years', '{}'),
   ('batch-c', 'Group C', '15+ yrs', '15+ yrs', '{}')
 ON CONFLICT (id) DO NOTHING;
 

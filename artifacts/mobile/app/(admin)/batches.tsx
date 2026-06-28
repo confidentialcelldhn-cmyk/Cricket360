@@ -149,16 +149,7 @@ export default function BatchesScreen() {
                                   </Text>
                                 </View>
                                 {log.isLocked ? (
-                                  <Pressable
-                                    style={{ flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: "rgba(251,191,36,0.15)", borderColor: "rgba(251,191,36,0.4)", borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}
-                                    onPress={() => Alert.alert("Unlock Attendance", `Unlock attendance for ${new Date(log.date).toLocaleDateString("en-IN")}? The coach will be able to edit it again.`, [
-                                      { text: "Cancel" },
-                                      { text: "Unlock", onPress: () => unlockAttendance(log.id) },
-                                    ])}
-                                  >
-                                    <Feather name="unlock" size={13} color="#D97706" />
-                                    <Text style={{ color: "#D97706", fontFamily: "Inter_600SemiBold", fontSize: 12 }}>Unlock</Text>
-                                  </Pressable>
+                                  <UnlockButton logId={log.id} logDate={log.date} onUnlock={unlockAttendance} />
                                 ) : (
                                   <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                                     <Feather name="edit-2" size={13} color={c.accentEmerald} />
@@ -188,6 +179,47 @@ export default function BatchesScreen() {
         />
       </Modal>
     </View>
+  );
+}
+
+function UnlockButton({ logId, logDate, onUnlock }: { logId: string; logDate: string; onUnlock: (id: string) => Promise<void> }) {
+  const c = useColors();
+  const [confirming, setConfirming] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  if (confirming) {
+    return (
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+        <Pressable
+          onPress={() => setConfirming(false)}
+          style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: c.borderSubtle }}
+        >
+          <Text style={{ color: c.textSecondary, fontFamily: "Inter_500Medium", fontSize: 12 }}>Cancel</Text>
+        </Pressable>
+        <Pressable
+          style={{ flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: "rgba(251,191,36,0.2)", borderColor: "#D97706", borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}
+          onPress={async () => {
+            setLoading(true);
+            await onUnlock(logId);
+            setLoading(false);
+            setConfirming(false);
+          }}
+        >
+          <Feather name="unlock" size={13} color="#D97706" />
+          <Text style={{ color: "#D97706", fontFamily: "Inter_700Bold", fontSize: 12 }}>{loading ? "..." : "Confirm"}</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return (
+    <Pressable
+      style={{ flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: "rgba(251,191,36,0.15)", borderColor: "rgba(251,191,36,0.4)", borderWidth: 1, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}
+      onPress={() => setConfirming(true)}
+    >
+      <Feather name="unlock" size={13} color="#D97706" />
+      <Text style={{ color: "#D97706", fontFamily: "Inter_600SemiBold", fontSize: 12 }}>Unlock</Text>
+    </Pressable>
   );
 }
 

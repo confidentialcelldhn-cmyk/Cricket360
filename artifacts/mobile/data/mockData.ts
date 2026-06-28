@@ -376,15 +376,15 @@ export const mockBatches: Batch[] = [
   {
     id: "batch-a",
     name: "Group A",
-    label: "6-10 yrs",
-    ageRange: "6-10 yrs",
+    label: "6-10 years",
+    ageRange: "6-10 years",
     coachIds: ["coach-001"],
   },
   {
     id: "batch-b",
     name: "Group B",
-    label: "11-15 yrs",
-    ageRange: "11-15 yrs",
+    label: "11-15 years",
+    ageRange: "11-15 years",
     coachIds: ["coach-002"],
   },
   {

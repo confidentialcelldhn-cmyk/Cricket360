@@ -105,7 +105,7 @@ export default function CoachesScreen() {
 function CoachDetailModal({ coach, batches, onClose, onEdit, onDeactivate }: any) {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const { resetPassword } = useData();
+  const { resetPassword, deleteCoach } = useData();
   const coachBatches = batches.filter((b: any) => coach.batchIds.includes(b.id));
 
   const handleResetPassword = () => {
@@ -171,6 +171,27 @@ function CoachDetailModal({ coach, batches, onClose, onEdit, onDeactivate }: any
           {coach.status === "active" && (
             <Button onPress={onDeactivate} label="Deactivate Coach" variant="danger" fullWidth icon="user-x" />
           )}
+          <Button
+            onPress={() => Alert.alert(
+              "Delete Coach Permanently",
+              `This will permanently delete ${coach.name} and all their data. This cannot be undone.`,
+              [
+                { text: "Cancel", style: "cancel" },
+                {
+                  text: "Delete Permanently",
+                  style: "destructive",
+                  onPress: async () => {
+                    await deleteCoach(coach.id);
+                    onClose();
+                  },
+                },
+              ]
+            )}
+            label="Delete Permanently"
+            variant="danger"
+            fullWidth
+            icon="trash-2"
+          />
         </View>
       </ScrollView>
     </View>

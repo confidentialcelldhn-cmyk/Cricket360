@@ -33,6 +33,9 @@ import {
   updateCoachRecord,
   updateUserRecord,
   resetUserPassword,
+  deleteStudentRecord,
+  deleteCoachRecord,
+  deleteUserRecord,
   upsertAttendanceLog,
   insertPerformanceLog,
   upsertFinancialLog,
@@ -91,12 +94,14 @@ interface DataContextType {
   deactivateStudent: (id: string) => Promise<void>;
   reactivateStudent: (id: string) => Promise<void>;
   transferBatch: (studentId: string, newBatchId: string) => Promise<void>;
+  deleteStudent: (id: string) => Promise<void>;
 
   // Coach ops
   addCoach: (coach: Coach, user: User) => Promise<void>;
   updateCoach: (id: string, updates: Partial<Coach>) => Promise<void>;
   deactivateCoach: (id: string) => Promise<void>;
   reactivateCoach: (id: string) => Promise<void>;
+  deleteCoach: (id: string) => Promise<void>;
 
   // Photo / QR
   uploadStudentPhoto: (studentId: string, file: string) => Promise<string | null>;
@@ -310,6 +315,23 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     await updateStudent(studentId, { batchId: newBatchId });
   }, [updateStudent]);
 
+  const deleteStudent = useCallback(async (id: string) => {
+    const student = students.find((s) => s.id === id);
+    if (useSupabase && isOnline) {
+      try {
+        await deleteStudentRecord(id);
+        if (student?.userId) {
+          try { await deleteUserRecord(student.userId); } catch {}
+        }
+      } catch (e) {
+        console.warn("[Supabase] deleteStudent failed, removing locally", e);
+      }
+    }
+    const updated = students.filter((s) => s.id !== id);
+    setStudents(updated);
+    await saveLocal(KEYS.students, updated);
+  }, [students, useSupabase, isOnline]);
+
   // ─── Coach Operations ─────────────────────────────────────────────────────────
 
   const addCoach = useCallback(async (coach: Coach, user: User) => {
@@ -361,6 +383,23 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const reactivateCoach = useCallback(async (id: string) => {
     await updateCoach(id, { status: "active" });
   }, [updateCoach]);
+
+  const deleteCoach = useCallback(async (id: string) => {
+    const coach = coaches.find((c) => c.id === id);
+    if (useSupabase && isOnline) {
+      try {
+        await deleteCoachRecord(id);
+        if (coach?.userId) {
+          try { await deleteUserRecord(coach.userId); } catch {}
+        }
+      } catch (e) {
+        console.warn("[Supabase] deleteCoach failed, removing locally", e);
+      }
+    }
+    const updated = coaches.filter((c) => c.id !== id);
+    setCoaches(updated);
+    await saveLocal(KEYS.coaches, updated);
+  }, [coaches, useSupabase, isOnline]);
 
   // ─── Schedule ───────────────────────────────────────────────────────────────────────────────
 
@@ -631,10 +670,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         deactivateStudent,
         reactivateStudent,
         transferBatch,
+        deleteStudent,
         addCoach,
         updateCoach,
         deactivateCoach,
         reactivateCoach,
+        deleteCoach,
         addSchedule,
         deleteSchedule,
         submitAttendance,
