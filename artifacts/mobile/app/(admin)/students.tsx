@@ -29,7 +29,7 @@ const isWeb = Platform.OS === "web";
 export default function StudentsScreen() {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const { students, batches, deactivateStudent, reactivateStudent, transferBatch, addStudent, updateStudent, uploadStudentPhoto } = useData();
+  const { students, batches, deactivateStudent, reactivateStudent, transferBatch, addStudent, updateStudent, uploadStudentPhoto, isStudentOverAge } = useData();
 
   const [search, setSearch] = useState("");
   const [filterBatch, setFilterBatch] = useState<string | "all">("all");
@@ -52,9 +52,10 @@ export default function StudentsScreen() {
 
   const StudentCard = ({ item }: { item: Student }) => {
     const batch = batches.find((b) => b.id === item.batchId);
+    const overAge = isStudentOverAge(item);
     return (
       <Pressable
-        style={({ pressed }) => [styles.studentCard, { backgroundColor: c.surfaceWhite, borderColor: c.borderSubtle, opacity: pressed ? 0.85 : 1 }]}
+        style={({ pressed }) => [styles.studentCard, { backgroundColor: c.surfaceWhite, borderColor: overAge ? c.accentRed : c.borderSubtle, opacity: pressed ? 0.85 : 1 }]}
         onPress={() => setSelectedStudent(item)}
       >
         <View style={{ flexDirection: "row", gap: 12, alignItems: "center" }}>
@@ -70,6 +71,14 @@ export default function StudentsScreen() {
             <Text style={{ color: c.textDisabled, fontSize: 11, fontFamily: "Inter_400Regular", marginTop: 1 }}>
               {item.parentMobile}
             </Text>
+            {overAge && (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 }}>
+                <Feather name="alert-triangle" size={11} color={c.accentRed} />
+                <Text style={{ color: c.accentRed, fontFamily: "Inter_600SemiBold", fontSize: 11 }}>
+                  Over-age — transfer recommended
+                </Text>
+              </View>
+            )}
           </View>
           <StatusBadge status={item.status === "active" ? "Active" : "Inactive"} />
         </View>

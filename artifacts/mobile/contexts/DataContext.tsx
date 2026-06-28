@@ -25,10 +25,12 @@ import {
   fetchAttendanceLogs,
   fetchPerformanceLogs,
   fetchFinancialLogs,
+  fetchNotifications,
   fetchSettings,
   insertStudent,
   insertCoach,
   insertUser,
+  insertNotification,
   updateStudentRecord,
   updateCoachRecord,
   updateUserRecord,
@@ -55,6 +57,7 @@ import {
   SystemSettings,
   User,
 } from "@/types";
+import { getAge } from "@/utils/dateUtils";
 
 const DATA_SEED_VERSION = "v4";
 
@@ -129,6 +132,7 @@ interface DataContextType {
   updateSettings: (updates: Partial<SystemSettings>) => Promise<void>;
 
   // Helpers
+  isStudentOverAge: (student: Student) => boolean;
   getStudentsByBatch: (batchId: string) => Student[];
   getPendingReceipts: (batchId: string) => { log: FinancialLog; student: Student }[];
   getDefaulters: (batchId: string, month: string) => Student[];
@@ -165,13 +169,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   // Load from Supabase
   const loadSupabase = async () => {
     try {
-      const [s, c, b, att, perf, fin, sets] = await Promise.all([
+      const [s, c, b, att, perf, fin, notif, sets] = await Promise.all([
         fetchStudents(),
         fetchCoaches(),
         fetchBatches(),
         fetchAttendanceLogs(),
         fetchPerformanceLogs(),
         fetchFinancialLogs(),
+        fetchNotifications(),
         fetchSettings(),
       ]);
       setStudents(s);
@@ -180,6 +185,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setAttendanceLogs(att);
       setPerformanceLogs(perf);
       setFinancialLogs(fin);
+      setNotifications(notif);
       if (sets) setSettings(sets);
       setIsOnline(true);
       // Also cache locally
@@ -190,6 +196,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         AsyncStorage.setItem(KEYS.attendance, JSON.stringify(att)),
         AsyncStorage.setItem(KEYS.performance, JSON.stringify(perf)),
         AsyncStorage.setItem(KEYS.financial, JSON.stringify(fin)),
+        AsyncStorage.setItem(KEYS.notifications, JSON.stringify(notif)),
         sets ? AsyncStorage.setItem(KEYS.settings, JSON.stringify(sets)) : Promise.resolve(),
       ]);
     } catch (e) {
@@ -253,6 +260,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Run age boundary check whenever students/batches change (after initial load)
+  useEffect(() => {
+    if (!isLoading && students.length > 0 && batches.length > 0) {
+      checkAgeBoundaries();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, students.length, batches.length]);
 
   // Local cache helper
   const saveLocal = async (key: string, data: unknown) => {
@@ -539,6 +554,46 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     await saveLocal(KEYS.notifications, updated);
   }, [notifications]);
 
+  // Age boundary helper: returns true if student exceeds batch upper age limit
+  const isStudentOverAge = useCallback((student: Student) => {
+    const age = getAge(student.dateOfBirth);
+    if (student.batchId === "batch-a" && age > 10) return true;
+    if (student.batchId === "batch-b" && age > 15) return true;
+    return false; // batch-c is 15+ (no upper limit)
+  }, []);
+
+  // Check all active students and push age-boundary notifications for admin
+  const checkAgeBoundaries = useCallback(() => {
+    const ageBoundaryNotifications = notifications.filter((n) => n.type === "age_boundary");
+    const today = new Date().toISOString().slice(0, 10);
+
+    students.filter((s) => s.status === "active" && isStudentOverAge(s)).forEach((student) => {
+      // Only create if no existing unread age_boundary for this student today
+      const existing = ageBoundaryNotifications.find(
+        (n) => n.message.includes(student.name) && n.createdAt.startsWith(today)
+      );
+      if (!existing) {
+        const batch = batches.find((b) => b.id === student.batchId);
+        const age = getAge(student.dateOfBirth);
+        const nextBatch = batch?.id === "batch-a" ? "Group B" : batch?.id === "batch-b" ? "Group C" : null;
+        const n: AppNotification = {
+          id: `age-${student.id}-${today}`,
+          forRole: "admin",
+          type: "age_boundary",
+          title: "Age Boundary Alert",
+          message: `${student.name} (${batch?.name}) is now ${age} years old. Consider transfer to ${nextBatch}.`,
+          createdAt: new Date().toISOString(),
+          read: false,
+        };
+        setNotifications((prev) => [n, ...prev]);
+        saveLocal(KEYS.notifications, [n, ...notifications]);
+        if (useSupabase && isOnline) {
+          insertNotification(n).catch(() => {});
+        }
+      }
+    });
+  }, [students, batches, notifications, isStudentOverAge, useSupabase, isOnline]);
+
   // ─── Settings ──────────────────────────────────────────────────────────────────────────────────────
 
   const updateSettings = useCallback(async (updates: Partial<SystemSettings>) => {
@@ -687,6 +742,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         updateSettings,
         uploadStudentPhoto,
         uploadQrPhoto,
+        isStudentOverAge,
         getStudentsByBatch,
         getPendingReceipts,
         getDefaulters,

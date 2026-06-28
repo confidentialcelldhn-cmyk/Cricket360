@@ -1,5 +1,6 @@
 import { supabase } from "./supabase";
 import {
+  AppNotification,
   AttendanceLog,
   Batch,
   Coach,
@@ -107,6 +108,20 @@ export async function insertUser(user: User): Promise<User> {
   const { data, error } = await supabase.from("users").insert(toSupabaseUser(user)).select().single();
   if (error) throw error;
   return fromSupabaseUser(data);
+}
+
+// ─── Notifications ──────────────────────────────────────────────────────────
+
+export async function fetchNotifications(): Promise<AppNotification[]> {
+  const { data, error } = await supabase.from("notifications").select("*").order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map(fromSupabaseNotification);
+}
+
+export async function insertNotification(n: AppNotification): Promise<AppNotification> {
+  const { data, error } = await supabase.from("notifications").insert(toSupabaseNotification(n)).select().single();
+  if (error) throw error;
+  return fromSupabaseNotification(data);
 }
 
 // ─── Performance Logs ─────────────────────────────────────────────────────
@@ -482,5 +497,33 @@ function toSupabaseSettings(s: SystemSettings): any {
     academy_address: s.academyAddress,
     academy_phone: s.academyPhone,
     academy_email: s.academyEmail,
+  };
+}
+
+function fromSupabaseNotification(row: any): AppNotification {
+  return {
+    id: row.id,
+    forRole: row.for_role,
+    forUserId: row.for_user_id,
+    type: row.type,
+    title: row.title,
+    message: row.message,
+    createdAt: row.created_at,
+    read: row.read,
+    linkId: row.link_id,
+  };
+}
+
+function toSupabaseNotification(n: AppNotification): any {
+  return {
+    id: n.id,
+    for_role: n.forRole,
+    for_user_id: n.forUserId,
+    type: n.type,
+    title: n.title,
+    message: n.message,
+    created_at: n.createdAt,
+    read: n.read,
+    link_id: n.linkId,
   };
 }
