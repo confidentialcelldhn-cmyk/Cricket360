@@ -8,18 +8,31 @@
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
     "splash": {
       "image": "./assets/images/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#0A1628"
     },
+
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.confidentialcell.cricket360"
     },
-    "android": {},
+
+    "android": {
+      "package": "com.confidentialcell.cricket360",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#0A1628"
+      }
+    },
+
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/images/icon.png"
     },
+
     "plugins": [
       [
         "expo-router",
@@ -30,9 +43,18 @@
       "expo-font",
       "expo-web-browser"
     ],
+
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+
+    "extra": {
+      "eas": {
+        "projectId": "e75e7a7f-80fd-4091-8be4-25cdc24bd8eb"
+      }
+    },
+
+    "owner": "divisional-sports-association-cricket360"
   }
 }
