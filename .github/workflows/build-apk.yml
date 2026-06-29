@@ -1,15 +1,10 @@
-name: Build APK
-
-on:
-  workflow_dispatch:
-
 jobs:
   android:
     runs-on: ubuntu-latest
 
     env:
-  EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-  EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
     steps:
       - name: Checkout repository
@@ -32,7 +27,7 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Login to Expo (via token)
+      - name: Login to Expo
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas whoami
@@ -43,9 +38,8 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build:configure --non-interactive || true
 
-      - name: Build APK (Preview)
+      - name: Build APK
         working-directory: artifacts/mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          eas build --platform android --profile preview --non-interactive
+        run: eas build --platform android --profile preview --non-interactive
