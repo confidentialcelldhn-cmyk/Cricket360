@@ -7,6 +7,10 @@ jobs:
   android:
     runs-on: ubuntu-latest
 
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,6 +39,8 @@ jobs:
 
       - name: Configure EAS project
         working-directory: artifacts/mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: eas build:configure --non-interactive || true
 
       - name: Build APK (Preview)
