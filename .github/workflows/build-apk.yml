@@ -34,11 +34,11 @@ jobs:
         run: eas whoami
 
       - name: Configure EAS project
-        working-directory: apps/mobile
+        working-directory: artifacts/mobile
         run: eas build:configure --non-interactive || true
 
       - name: Build APK (Preview)
-        working-directory: apps/mobile
+        working-directory: artifacts/mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
