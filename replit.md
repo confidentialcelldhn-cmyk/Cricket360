@@ -32,4 +32,4 @@ scripts/            Utility TypeScript scripts
 - `EXPO_PUBLIC_SUPABASE_URL` — Supabase project URL
 - `EXPO_PUBLIC_SUPABASE_ANON_KEY` — Supabase anon/public key
 
-## User preferences
+## User preferences 
