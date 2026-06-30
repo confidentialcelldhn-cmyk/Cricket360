@@ -26,6 +26,7 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#0A1628"
       }
+      "permissions": ["INTERNET"]
     },
 
     "web": {
