@@ -18,6 +18,7 @@ import {
   mockSchedules,
   mockStudents,
 } from "@/data/mockData";
+
 import {
   fetchStudents,
   fetchCoaches,
@@ -45,6 +46,7 @@ import {
   uploadPhoto,
   getPhotoUrl,
 } from "@/lib/supabaseService";
+
 import {
   AppNotification,
   AttendanceLog,
@@ -57,10 +59,10 @@ import {
   SystemSettings,
   User,
 } from "@/types";
+
 import { getAge } from "@/utils/dateUtils";
 
 const DATA_SEED_VERSION = "v4";
-
 const KEYS = {
   seedVersion: "@c360_seed_version",
   students: "@c360_students",
@@ -90,7 +92,7 @@ interface DataContextType {
   isOnline: boolean;
   useSupabase: boolean;
   resetPassword: (userId: string, role: string) => Promise<void>;
-
+  
   // Student ops
   addStudent: (student: Student, user: User) => Promise<void>;
   updateStudent: (id: string, updates: Partial<Student>) => Promise<void>;
@@ -117,7 +119,7 @@ interface DataContextType {
   // Attendance
   submitAttendance: (log: AttendanceLog) => Promise<void>;
   unlockAttendance: (logId: string) => Promise<void>;
-
+  
   // Performance
   savePerformance: (log: PerformanceLog) => Promise<void>;
 
@@ -127,7 +129,7 @@ interface DataContextType {
 
   // Notifications
   markNotificationRead: (id: string) => Promise<void>;
-
+  
   // Settings
   updateSettings: (updates: Partial<SystemSettings>) => Promise<void>;
 
@@ -155,8 +157,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [financialLogs, setFinancialLogs] = useState<FinancialLog[]>([]);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [settings, setSettings] = useState<SystemSettings>(defaultSettings);
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
+  
   const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL;
   const [useSupabase, setUseSupabase] = useState(!!SUPABASE_URL);
 
@@ -179,6 +183,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         fetchNotifications(),
         fetchSettings(),
       ]);
+      
       setStudents(s);
       setCoaches(c);
       setBatches(b);
@@ -188,6 +193,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       setNotifications(notif);
       if (sets) setSettings(sets);
       setIsOnline(true);
+      
       // Also cache locally
       await Promise.all([
         AsyncStorage.setItem(KEYS.students, JSON.stringify(s)),
@@ -199,6 +205,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         AsyncStorage.setItem(KEYS.notifications, JSON.stringify(notif)),
         sets ? AsyncStorage.setItem(KEYS.settings, JSON.stringify(sets)) : Promise.resolve(),
       ]);
+      
     } catch (e) {
       console.warn("[Supabase load failed, falling back to local]", e);
       setIsOnline(false);
@@ -236,6 +243,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       loadOrInit(KEYS.notifications, mockNotifications),
       AsyncStorage.getItem(KEYS.settings),
     ]);
+    
     setStudents(s);
     setCoaches(c);
     setBatches(b);
@@ -564,18 +572,46 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   // Check all active students and push age-boundary notifications for admin
   const checkAgeBoundaries = useCallback(() => {
-    const ageBoundaryNotifications = notifications.filter((n) => n.type === "age_boundary");
+    let updatedNotifications = [...notifications];
+    let changed = false;
     const today = new Date().toISOString().slice(0, 10);
 
+    // 1. Prune obsolete notifications & dynamically update age text for existing ones
+    updatedNotifications = updatedNotifications.filter((n) => {
+      if (n.type !== "age_boundary") return true; // Leave other types of notifications alone
+      
+      // Find the student this notification belongs to
+      const linkedStudent = students.find((s) => n.id.includes(s.id));
+      
+      // If student doesn't exist, was deactivated, or is NO LONGER over-age, REMOVE notification
+      if (!linkedStudent || linkedStudent.status !== "active" || !isStudentOverAge(linkedStudent)) {
+        changed = true;
+        return false; 
+      }
+
+      // If they ARE still over-age, dynamically update the text so the age is always correct
+      const batch = batches.find((b) => b.id === linkedStudent.batchId);
+      const age = getAge(linkedStudent.dateOfBirth);
+      const nextBatch = batch?.id === "batch-a" ? "Group B" : batch?.id === "batch-b" ? "Group C" : null;
+      const correctMessage = `${linkedStudent.name} (${batch?.name}) is now ${age} years old. Consider transfer to ${nextBatch}.`;
+      
+      if (n.message !== correctMessage) {
+         n.message = correctMessage;
+         changed = true;
+      }
+      
+      return true; // Keep the notification
+    });
+
+    // 2. Add notifications for newly over-age students
     students.filter((s) => s.status === "active" && isStudentOverAge(s)).forEach((student) => {
-      // Only create if no existing unread age_boundary for this student today
-      const existing = ageBoundaryNotifications.find(
-        (n) => n.message.includes(student.name) && n.createdAt.startsWith(today)
-      );
+      const existing = updatedNotifications.find((n) => n.type === "age_boundary" && n.id.includes(student.id));
+      
       if (!existing) {
         const batch = batches.find((b) => b.id === student.batchId);
         const age = getAge(student.dateOfBirth);
         const nextBatch = batch?.id === "batch-a" ? "Group B" : batch?.id === "batch-b" ? "Group C" : null;
+        
         const n: AppNotification = {
           id: `age-${student.id}-${today}`,
           forRole: "admin",
@@ -585,13 +621,21 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
           createdAt: new Date().toISOString(),
           read: false,
         };
-        setNotifications((prev) => [n, ...prev]);
-        saveLocal(KEYS.notifications, [n, ...notifications]);
+        
+        updatedNotifications.unshift(n); // Add to top of list
+        changed = true;
+        
         if (useSupabase && isOnline) {
           insertNotification(n).catch(() => {});
         }
       }
     });
+
+    // 3. Save only if anything was added, updated, or removed
+    if (changed) {
+      setNotifications(updatedNotifications);
+      saveLocal(KEYS.notifications, updatedNotifications);
+    }
   }, [students, batches, notifications, isStudentOverAge, useSupabase, isOnline]);
 
   // ─── Settings ──────────────────────────────────────────────────────────────────────────────────────
