@@ -28,21 +28,25 @@ function RootLayoutNav() {
   const router = useRouter();
 
   useEffect(() => {
+    // Wait until the auth state is fully loaded
     if (isLoading) return;
 
     const first = segments[0] as string | undefined;
-    const isOnLogin = first === "login";
-    const isOnReset = first === "reset-password";
-    const isOnRoot = first === "(tabs)" || first === undefined;
 
     if (!isAuthenticated) {
-      if (!isOnLogin) router.replace("/login");
+      // If not logged in, force to login
+      if (first !== "login") router.replace("/login");
     } else if (isFirstLogin) {
-      if (!isOnReset) router.replace("/reset-password");
-    } else if (isOnLogin || isOnReset || isOnRoot) {
-      if (currentUser?.role === "admin") router.replace("/dashboard");
-      else if (currentUser?.role === "coach") router.replace("/home");
-      else router.replace("/student-home");
+      // If first login, force to reset password
+      if (first !== "reset-password") router.replace("/reset-password");
+    } else {
+      // If logged in and password set, navigate based on role
+      // Only redirect if we are NOT already on the correct dashboard structure
+      if (first !== "(admin)" && first !== "(coach)" && first !== "(student)") {
+        if (currentUser?.role === "admin") router.replace("/(admin)/dashboard");
+        else if (currentUser?.role === "coach") router.replace("/(coach)/home");
+        else router.replace("/(student)/student-home");
+      }
     }
   }, [isAuthenticated, isFirstLogin, isLoading, segments, currentUser]);
 
