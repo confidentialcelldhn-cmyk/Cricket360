@@ -62,6 +62,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const supabaseUsers = await fetchUsers();
       setAllUsers(supabaseUsers);
+      
+      // FIX: First, check if we have a local session ID saved
+      const localSessionId = await AsyncStorage.getItem(SESSION_KEY);
+      
+      if (localSessionId) {
+        const userId = JSON.parse(localSessionId);
+        const user = supabaseUsers.find((u) => u.id === userId);
+        if (user && user.status === "active") {
+          setCurrentUser(user);
+          return; // Early exit, we are logged in
+        }
+      }
+
+      // Fallback: check actual Supabase Auth session
       const { data } = await supabase.auth.getSession();
       if (data?.session?.user?.email) {
         const user = supabaseUsers.find((u) => u.loginId === data.session!.user.email);
@@ -235,4 +249,5 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be inside AuthProvider");
   return ctx;
-}
+      }
+        
