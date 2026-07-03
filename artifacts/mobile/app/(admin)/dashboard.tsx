@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Avatar, Card, NotificationItem, SectionHeader, StatCard, StatusBadge } from "@/components/ui";
@@ -17,7 +18,7 @@ export default function AdminDashboard() {
   const c = useColors();
   const insets = useSafeAreaInsets();
   const { currentUser, logout } = useAuth();
-  const { students, coaches, batches, financialLogs, attendanceLogs, notifications, markNotificationRead } = useData();
+  const { students, coaches, batches, financialLogs, attendanceLogs, notifications, markNotificationRead, deleteNotification } = useData();
   const router = useRouter();
 
   const stats = useMemo(() => {
@@ -154,15 +155,26 @@ export default function AdminDashboard() {
         ) : (
           <View>
             {recentNotifications.map((notif) => (
-              <NotificationItem
+              <Swipeable
                 key={notif.id}
-                title={notif.title}
-                message={notif.message}
-                time={new Date(notif.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-                unread={!notif.read}
-                icon={notif.type === "age_boundary" ? "alert-triangle" : notif.type === "new_admission" ? "user-plus" : "bell"}
-                onPress={() => markNotificationRead(notif.id)}
-              />
+                renderRightActions={() => (
+                  <Pressable 
+                    onPress={() => deleteNotification(notif.id)}
+                    style={{ backgroundColor: c.accentRed, justifyContent: "center", alignItems: "center", width: 70, borderRadius: 12, marginBottom: 10, marginLeft: 10 }}
+                  >
+                    <Feather name="trash-2" size={20} color="#fff" />
+                  </Pressable>
+                )}
+              >
+                <NotificationItem
+                  title={notif.title}
+                  message={notif.message}
+                  time={new Date(notif.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                  unread={!notif.read}
+                  icon={notif.type === "age_boundary" ? "alert-triangle" : notif.type === "new_admission" ? "user-plus" : "bell"}
+                  onPress={() => markNotificationRead(notif.id)}
+                />
+              </Swipeable>
             ))}
           </View>
         )}
