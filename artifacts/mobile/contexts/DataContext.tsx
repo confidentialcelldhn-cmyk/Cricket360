@@ -45,6 +45,7 @@ import {
   upsertSettings,
   uploadPhoto,
   getPhotoUrl,
+  deleteNotificationRecord,
 } from "@/lib/supabaseService";
 
 import {
@@ -129,6 +130,7 @@ interface DataContextType {
 
   // Notifications
   markNotificationRead: (id: string) => Promise<void>;
+  deleteNotification: (id: string) => Promise<void>;
   
   // Settings
   updateSettings: (updates: Partial<SystemSettings>) => Promise<void>;
@@ -562,6 +564,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     await saveLocal(KEYS.notifications, updated);
   }, [notifications]);
 
+  const deleteNotification = useCallback(async (id: string) => {
+    // Remove from local state immediately for a snappy UI
+    const updated = notifications.filter((n) => n.id !== id);
+    setNotifications(updated);
+    await saveLocal(KEYS.notifications, updated);
+  
+    // Delete from Supabase in the background
+    if (useSupabase && isOnline) {
+      try {
+        await deleteNotificationRecord(id);
+      } catch (e) {
+        console.warn("[Supabase] deleteNotification failed", e);
+      }
+    }
+  }, [notifications, useSupabase, isOnline]);
+
   // Age boundary helper: returns true if student exceeds batch upper age limit
   const isStudentOverAge = useCallback((student: Student) => {
     const age = getAge(student.dateOfBirth);
@@ -783,6 +801,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         uploadReceipt,
         verifyReceipt,
         markNotificationRead,
+        deleteNotification,
         updateSettings,
         uploadStudentPhoto,
         uploadQrPhoto,
