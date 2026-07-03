@@ -44,10 +44,14 @@ export default function ReportsScreen() {
     const pending = monthLogs.filter((f) => f.status === "Pending").length;
     const rejected = monthLogs.filter((f) => f.status === "Rejected").length;
     const unpaid = activeStudents.length - paid - pending - rejected;
-    const collected = paid * 1500;
-    const expected = activeStudents.length * 1500;
+    
+    // FIX: Pull dynamic fee from settings, fallback to 1500 if undefined
+    const fee = settings.feeAmount || 1500;
+    const collected = paid * fee;
+    const expected = activeStudents.length * fee;
+    
     return { paid, pending, rejected, unpaid: Math.max(0, unpaid), collected, expected, total: activeStudents.length };
-  }, [students, financialLogs, selectedMonth]);
+  }, [students, financialLogs, selectedMonth, settings.feeAmount]);
 
   const financialReportRows = useMemo((): FinancialReportRow[] => {
     const activeStudents = students.filter((s) => s.status === "active");
