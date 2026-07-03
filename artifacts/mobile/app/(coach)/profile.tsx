@@ -49,7 +49,7 @@ export default function CoachProfileScreen() {
         colors={["#0A1628", "#1A3A6E"]}
         style={[styles.header, { paddingTop: topPad + 24 }]}
       >
-        <Avatar name={coach.name} size={80} />
+        <Avatar name={coach.name} size={80} uri={coach.photo} />
         <Text style={styles.name}>{coach.name}</Text>
         <Text style={styles.designation}>{coach.designation}</Text>
         <View style={styles.hrmsChip}>
