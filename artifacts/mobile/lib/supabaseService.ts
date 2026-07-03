@@ -124,6 +124,11 @@ export async function insertNotification(n: AppNotification): Promise<AppNotific
   return fromSupabaseNotification(data);
 }
 
+export async function deleteNotificationRecord(id: string): Promise<void> {
+  const { error } = await supabase.from("notifications").delete().eq("id", id);
+  if (error) throw error;
+}
+
 // ─── Performance Logs ─────────────────────────────────────────────────────
 
 export async function fetchPerformanceLogs(): Promise<PerformanceLog[]> {
@@ -175,7 +180,15 @@ export async function fetchSettings(): Promise<SystemSettings | null> {
 }
 
 export async function upsertSettings(settings: SystemSettings): Promise<SystemSettings> {
-  const { data, error } = await supabase.from("settings").upsert(toSupabaseSettings(settings)).select().single();
+  // 1. Get the existing row ID so Supabase knows we are UPDATING, not inserting.
+  const { data: existing } = await supabase.from("settings").select("id").limit(1).single();
+  
+  const payload = toSupabaseSettings(settings);
+  if (existing?.id) {
+    payload.id = existing.id; // Attach the ID to force an update
+  }
+
+  const { data, error } = await supabase.from("settings").upsert(payload).select().single();
   if (error) throw error;
   return fromSupabaseSettings(data);
 }
