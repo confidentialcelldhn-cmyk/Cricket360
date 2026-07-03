@@ -22,6 +22,7 @@ export default function StudentHomeScreen() {
     students, batches, coaches, schedules,
     getStudentFeeStatus, getStudentPerformance,
     attendanceLogs,
+    settings // <-- ADDED: Pulling settings from DataContext
   } = useData();
   const router = useRouter();
 
@@ -136,9 +137,12 @@ export default function StudentHomeScreen() {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: "Inter_700Bold", fontSize: 15, color: c.textPrimary }}>June 2026 Fee</Text>
+              
+              {/* FIX: Dynamic fee amount formatted with commas */}
               <Text style={{ color: c.textSecondary, fontSize: 13, fontFamily: "Inter_400Regular", marginTop: 2 }}>
-                ₹1,500 monthly
+                ₹{settings?.feeAmount?.toLocaleString() || "1,500"} monthly
               </Text>
+              
               {feeStatus?.status === "Rejected" && (
                 <Text style={{ color: c.accentRed, fontSize: 12, fontFamily: "Inter_500Medium", marginTop: 4 }}>
                   Rejected: {feeStatus.rejectionNote?.slice(0, 60)}...
