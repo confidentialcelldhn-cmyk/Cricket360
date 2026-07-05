@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View, TextInput } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button, FormInput, SectionHeader } from "@/components/ui";
@@ -120,13 +120,15 @@ export default function SettingsScreen() {
               MONTHLY FEE AMOUNT (₹)
             </Text>
             <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: c.primary100, borderRadius: 12, paddingHorizontal: 14, height: 52 }}>
-              <Feather name="dollar-sign" size={18} color={c.textDisabled} style={{ marginRight: 10 }} />
-              <Text style={{ fontSize: 24, fontFamily: "Inter_700Bold", color: c.textPrimary }}>{form.feeAmount}</Text>
-            </View>
-            <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
-              {[1000, 1500, 2000].map((amt) => (
-                <Button key={amt} onPress={() => setForm((f) => ({ ...f, feeAmount: amt }))} label={`₹${amt}`} variant={form.feeAmount === amt ? "primary" : "secondary"} size="sm" />
-              ))}
+              <Text style={{ fontSize: 20, color: c.textDisabled, marginRight: 10, fontFamily: "Inter_700Bold" }}>₹</Text>
+              <TextInput
+                style={{ fontSize: 24, fontFamily: "Inter_700Bold", color: c.textPrimary, flex: 1 }}
+                value={form.feeAmount ? form.feeAmount.toString() : ""}
+                onChangeText={(val) => setForm(f => ({ ...f, feeAmount: Number(val.replace(/[^0-9]/g, "")) || 0 }))}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={c.textDisabled}
+              />
             </View>
           </View>
 
@@ -199,3 +201,4 @@ const styles = StyleSheet.create({
   title: { color: "#fff", fontSize: 24, fontFamily: "Inter_700Bold" },
   section: { borderRadius: 16, borderWidth: 1, padding: 16, gap: 14, marginBottom: 16 },
 });
+              
