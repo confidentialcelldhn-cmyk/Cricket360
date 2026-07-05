@@ -180,13 +180,10 @@ export async function fetchSettings(): Promise<SystemSettings | null> {
 }
 
 export async function upsertSettings(settings: SystemSettings): Promise<SystemSettings> {
-  // 1. Get the existing row ID so Supabase knows we are UPDATING, not inserting.
-  const { data: existing } = await supabase.from("settings").select("id").limit(1).single();
+  const { data: existing } = await supabase.from("settings").select("id").limit(1).maybeSingle();
   
   const payload = toSupabaseSettings(settings);
-  if (existing?.id) {
-    payload.id = existing.id; // Attach the ID to force an update
-  }
+  payload.id = existing?.id || 1; 
 
   const { data, error } = await supabase.from("settings").upsert(payload).select().single();
   if (error) throw error;
@@ -196,12 +193,10 @@ export async function upsertSettings(settings: SystemSettings): Promise<SystemSe
 // ─── Storage (Photos) ──────────────────────────────────────────────────────────────
 
 export async function uploadPhoto(bucket: "cricket360", path: string, file: string) {
-  // file is always a data URI: "data:image/jpeg;base64,..."
   const base64 = file.startsWith("data:") ? file.split(",")[1] : file;
   if (!base64) throw new Error("Invalid base64 string");
   const mime = file.startsWith("data:") ? (file.match(/data:([^;]+);/)?.[1] ?? "image/jpeg") : "image/jpeg";
 
-  // decode base64 → ArrayBuffer (works in React Native where Blob/atob may not)
   const { decode } = await import("base64-arraybuffer");
   const arrayBuffer = decode(base64);
 
