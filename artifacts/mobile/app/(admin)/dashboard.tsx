@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       >
         <View style={styles.headerContent}>
           <View>
-            <Text style={styles.greeting}>Good morning 👋</Text>
+            <Text style={styles.greeting}>Welcome Back 👋</Text>
             <Text style={styles.userName}>{currentUser?.name ?? "Admin"}</Text>
           </View>
           <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
