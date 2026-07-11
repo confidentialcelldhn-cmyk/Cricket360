@@ -16,12 +16,26 @@ import {
 } from "@/utils/reportExport";
 
 const isWeb = Platform.OS === "web";
-const MONTHS = ["2026-06", "2026-05", "2026-04"];
-const MONTH_LABELS: Record<string, string> = {
-  "2026-06": "June 2026",
-  "2026-05": "May 2026",
-  "2026-04": "April 2026",
+
+// Dynamically generate the current month and the two previous months
+const generateRecentMonths = () => {
+  const months: string[] = [];
+  const labels: Record<string, string> = {};
+  const today = new Date();
+
+  for (let i = 0; i < 3; i++) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    const year = d.getFullYear();
+    const monthNum = String(d.getMonth() + 1).padStart(2, "0");
+    const key = `${year}-${monthNum}`;
+
+    months.push(key);
+    labels[key] = d.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+  }
+  return { months, labels };
 };
+
+const { months: MONTHS, labels: MONTH_LABELS } = generateRecentMonths();
 
 type ReportType = "financial" | "attendance" | "performance";
 type ExportMode = "csv" | "pdf";
@@ -31,7 +45,7 @@ export default function ReportsScreen() {
   const insets = useSafeAreaInsets();
   const { students, batches, attendanceLogs, performanceLogs, financialLogs, settings } = useData();
   const [reportType, setReportType] = useState<ReportType>("financial");
-  const [selectedMonth, setSelectedMonth] = useState("2026-06");
+  const [selectedMonth, setSelectedMonth] = useState(MONTHS[0]);
   const [expandedBatch, setExpandedBatch] = useState<string | null>(null);
   const [exporting, setExporting] = useState<ExportMode | null>(null);
   const topPad = isWeb ? 67 : insets.top;
