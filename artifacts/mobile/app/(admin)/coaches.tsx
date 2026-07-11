@@ -341,7 +341,7 @@ function AddCoachModal({ batches, onClose, onSave, uploadStudentPhoto }: any) {
       hrmsId: form.hrmsId.trim(), mobile: form.mobile.trim(), email: form.email.trim(),
       photo: photoUrl ?? undefined,
       batchIds: form.batchId ? [form.batchId] : [], status: "active",
-      createdAt: new Date().toISOString().slice(0, 10),
+      createdAt: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`,
     };
     onSave(coach, { id: `user-${id}`, name: form.name.trim(), role: "coach", loginId: form.mobile.trim(), password: "Coach@123", isFirstLogin: true, status: "active", linkedId: id });
   };
