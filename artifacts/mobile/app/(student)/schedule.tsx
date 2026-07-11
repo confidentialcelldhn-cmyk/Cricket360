@@ -9,7 +9,8 @@ import { useData } from "@/contexts/DataContext";
 import { useColors } from "@/hooks/useColors";
 import { Schedule } from "@/types";
 
-const TODAY = "2026-06-23";
+const d = new Date();
+const TODAY = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const isWeb = Platform.OS === "web";
 
 const SESSION_COLORS: Record<Schedule["type"], string> = {
