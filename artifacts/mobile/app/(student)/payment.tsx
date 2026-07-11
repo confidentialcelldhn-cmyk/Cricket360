@@ -11,14 +11,24 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import { useColors } from "@/hooks/useColors";
 
-const THIS_MONTH = "2026-06";
-const MONTH_LABEL = "June 2026";
-const isWeb = Platform.OS === "web";
+const generateRecentMonths = () => {
+  const history = [];
+  const today = new Date();
+  // Generate the previous 2 months for the history tab
+  for (let i = 1; i <= 2; i++) {
+    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const label = d.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+    history.push({ key, label });
+  }
+  return history;
+};
 
-const HISTORY_MONTHS = [
-  { key: "2026-05", label: "May 2026" },
-  { key: "2026-04", label: "April 2026" },
-];
+const d = new Date();
+const THIS_MONTH = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+const MONTH_LABEL = d.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+const HISTORY_MONTHS = generateRecentMonths();
+const isWeb = Platform.OS === "web";
 
 export default function PaymentScreen() {
   const c = useColors();
