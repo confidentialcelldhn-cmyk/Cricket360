@@ -18,7 +18,13 @@ export function parseDate(dob: string): Date {
   
   // Handle YYYY-MM-DD or Supabase Timestamps (YYYY-MM-DDTHH:MM:SSZ)
   if (dob.includes("-")) {
-    const datePart = dob.split("T")[0]; // Ignore time part if present
+    // If it's a full UTC timestamp, parse it directly to get local time
+    if (dob.includes("T") && dob.includes("Z")) {
+      return new Date(dob);
+    }
+    
+    // Otherwise, treat it as a local date string (YYYY-MM-DD)
+    const datePart = dob.split("T")[0]; 
     const parts = datePart.split("-");
     if (parts.length === 3) {
       const [y, m, d] = parts;
