@@ -42,7 +42,7 @@ export default function FeesScreen() {
   const [selectedReceipt, setSelectedReceipt] = useState<{ log: FinancialLog; student: Student } | null>(null);
   const [rejectNote, setRejectNote] = useState("");
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [historyMonth, setHistoryMonth] = useState("2026-06");
+  const [historyMonth, setHistoryMonth] = useState(HISTORY_MONTHS[0].key);
 
   const pendingReceipts = useMemo(
     () => (primaryBatch ? getPendingReceipts(primaryBatch.id) : []),
