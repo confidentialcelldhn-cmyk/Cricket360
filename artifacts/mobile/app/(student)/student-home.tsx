@@ -10,8 +10,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import { useColors } from "@/hooks/useColors";
 
-const THIS_MONTH = "2026-06";
-const TODAY = "2026-06-23";
+const d = new Date();
+const THIS_MONTH = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+const TODAY = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const isWeb = Platform.OS === "web";
 
 export default function StudentHomeScreen() {
