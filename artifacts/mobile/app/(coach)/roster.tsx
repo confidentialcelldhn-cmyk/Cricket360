@@ -198,7 +198,8 @@ export default function RosterScreen() {
 function AddStudentModal({ batchId, onClose, onSave, uploadStudentPhoto }: { batchId: string; onClose: () => void; onSave: (s: Student, u: any) => void; uploadStudentPhoto: (id: string, photo: string) => Promise<string | null> }) {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const todayIso = new Date().toISOString().slice(0, 10);
+  const dDate = new Date();
+  const todayIso = `${dDate.getFullYear()}-${String(dDate.getMonth() + 1).padStart(2, "0")}-${String(dDate.getDate()).padStart(2, "0")}`;
   const todayDisplay = toDisplayDate(todayIso);
 
   const [photo, setPhoto] = useState<string | undefined>(undefined);
