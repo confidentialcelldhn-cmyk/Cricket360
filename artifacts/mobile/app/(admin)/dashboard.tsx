@@ -28,7 +28,8 @@ export default function AdminDashboard() {
     const monthFees = financialLogs.filter((f) => f.billingMonth === THIS_MONTH);
     const paidFees = monthFees.filter((f) => f.status === "Paid").length;
     const feeRate = activeStudents > 0 ? Math.round((paidFees / activeStudents) * 100) : 0;
-    const today = new Date().toISOString().slice(0, 10);
+    const dDate = new Date();
+    const today = `${dDate.getFullYear()}-${String(dDate.getMonth() + 1).padStart(2, "0")}-${String(dDate.getDate()).padStart(2, "0")}`;
     const todayLogs = attendanceLogs.filter((a) => a.date === today);
     const totalPresent = todayLogs.reduce((s, l) => s + l.entries.filter((e) => e.status === "Present").length, 0);
     const totalMarked = todayLogs.reduce((s, l) => s + l.entries.length, 0);
