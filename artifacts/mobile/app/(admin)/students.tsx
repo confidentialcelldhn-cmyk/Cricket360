@@ -430,7 +430,8 @@ function RadioGroup({ label, options, value, onChange }: { label: string; option
 function AddStudentModal({ batches, onClose, onSave, uploadStudentPhoto }: any) {
   const c = useColors();
   const insets = useSafeAreaInsets();
-  const today = new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
   const [photo, setPhoto] = useState<string | undefined>(undefined);
   const [form, setForm] = useState({
