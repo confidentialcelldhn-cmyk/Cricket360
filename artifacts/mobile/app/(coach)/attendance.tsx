@@ -9,7 +9,8 @@ import { useData } from "@/contexts/DataContext";
 import { useColors } from "@/hooks/useColors";
 import { AttendanceLog, AttendanceStatus, Student } from "@/types";
 
-const TODAY = new Date().toISOString().slice(0, 10);
+const d = new Date();
+const TODAY = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const isWeb = Platform.OS === "web";
 
 type StatusMap = Record<string, AttendanceStatus>;
