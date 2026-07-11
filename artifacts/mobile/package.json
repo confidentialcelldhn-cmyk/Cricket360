@@ -63,6 +63,8 @@
     "expo-sharing": "~14.0.8",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
-    "react-native-url-polyfill": "^2.0.0"
+    "react-native-url-polyfill": "^2.0.0",
+    "react-native-calendars": "^1.1306.0",
+    "@react-native-community/datetimepicker": "8.2.0"
   }
 }
