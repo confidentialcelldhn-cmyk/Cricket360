@@ -24,7 +24,11 @@ export default function BatchesScreen() {
     studentCount: students.filter((s) => s.batchId === batchId && s.status === "active").length,
     coach: coaches.find((c) => batches.find((b) => b.id === batchId)?.coachIds.includes(c.id)),
     upcomingSchedules: schedules
-      .filter((s) => s.batchId === batchId && s.date >= new Date().toISOString().slice(0, 10))
+      .filter((s) => {
+        const d = new Date();
+        const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        return s.batchId === batchId && s.date >= today;
+      })
       .sort((a, b) => a.date.localeCompare(b.date)),
   });
 
