@@ -592,7 +592,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const checkAgeBoundaries = useCallback(() => {
     let updatedNotifications = [...notifications];
     let changed = false;
-    const today = new Date().toISOString().slice(0, 10);
+    const dDate = new Date();
+    const today = `${dDate.getFullYear()}-${String(dDate.getMonth() + 1).padStart(2, "0")}-${String(dDate.getDate()).padStart(2, "0")}`;
 
     // 1. Prune obsolete notifications & dynamically update age text for existing ones
     updatedNotifications = updatedNotifications.filter((n) => {
