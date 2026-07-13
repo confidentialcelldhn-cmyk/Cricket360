@@ -35,9 +35,17 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#0A1628"
       },
-      "permissions": ["INTERNET"]
+      "permissions": ["INTERNET"],
+      "queries": [
+        { "package": "com.google.android.apps.nbu.paisa.user" }, 
+        { "package": "com.phonepe.app" },                          
+        { "package": "net.one97.paytm" },                          
+        { "package": "in.org.npci.upiapp" },                       
+        { "package": "com.dreamplug.androidapp" },                 
+        { "package": "com.whatsapp" },
+        { "intent": { "action": "android.intent.action.VIEW", "data": { "scheme": "upi" } } }
+      ]
     },
-
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/icon.png"
