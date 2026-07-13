@@ -55,7 +55,13 @@ export default function PaymentScreen() {
       showMsg("info", `UPI ID: ${settings.upiId}  |  Pay ₹${settings.feeAmount} to ${settings.beneficiaryName} using any UPI app, then upload your screenshot below.`);
       return;
     }
-    const url = `upi://pay?pa=${settings.upiId}&pn=${encodeURIComponent(settings.beneficiaryName)}&am=${settings.feeAmount}&tn=${encodeURIComponent(`Cricket360 Monthly Fee ${MONTH_LABEL}`)}`;
+    
+    // Amount ko strictly 2 decimal places mein convert karein
+    const formattedAmount = Number(settings.feeAmount).toFixed(2);
+    
+    // &cu=INR add kiya gaya hai aur amount format theek kiya gaya hai
+    const url = `upi://pay?pa=${settings.upiId}&pn=${encodeURIComponent(settings.beneficiaryName)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(`Cricket360 Monthly Fee ${MONTH_LABEL}`)}`;
+    
     Linking.openURL(url).catch(() =>
       showMsg("error", `UPI app not found. Pay manually to UPI ID: ${settings.upiId}`)
     );
