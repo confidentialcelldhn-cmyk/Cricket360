@@ -17,7 +17,16 @@
 
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.confidentialcell.cricket360"
+      "bundleIdentifier": "com.confidentialcell.cricket360",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "upi",
+          "paytm",
+          "gpay",
+          "phonepe",
+          "bhim"
+        ]
+      }
     },
 
     "android": {
